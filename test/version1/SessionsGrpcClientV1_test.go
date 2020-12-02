@@ -8,10 +8,16 @@ import (
 	"github.com/pip-services3-go/pip-services3-commons-go/config"
 )
 
-var client *version1.SessionGrpcClientV1
-var fixture *SessionsClientFixtureV1
+type sessionGrpcClientV1Test struct {
+	client  *version1.SessionGrpcClientV1
+	fixture *SessionsClientFixtureV1
+}
 
-func setup(t *testing.T) *SessionsClientFixtureV1 {
+func newSessionGrpcClientV1Test() *sessionGrpcClientV1Test {
+	return &sessionGrpcClientV1Test{}
+}
+
+func (c *sessionGrpcClientV1Test) setup(t *testing.T) *SessionsClientFixtureV1 {
 	var GRPC_HOST = os.Getenv("GRPC_HOST")
 	if GRPC_HOST == "" {
 		GRPC_HOST = "localhost"
@@ -27,29 +33,31 @@ func setup(t *testing.T) *SessionsClientFixtureV1 {
 		"connection.port", GRPC_PORT,
 	)
 
-	client = version1.NewSessionGrpcClientV1()
-	client.Configure(httpConfig)
-	client.Open("")
+	c.client = version1.NewSessionGrpcClientV1()
+	c.client.Configure(httpConfig)
+	c.client.Open("")
 
-	fixture = NewSessionsClientFixtureV1(client)
+	c.fixture = NewSessionsClientFixtureV1(c.client)
 
-	return fixture
+	return c.fixture
 }
 
-func teardown(t *testing.T) {
-	client.Close("")
+func (c *sessionGrpcClientV1Test) teardown(t *testing.T) {
+	c.client.Close("")
 }
 
-func TestOpenSession(t *testing.T) {
-	fixture := setup(t)
-	defer teardown(t)
+func TestGrpcOpenSession(t *testing.T) {
+	c := newSessionGrpcClientV1Test()
+	fixture := c.setup(t)
+	defer c.teardown(t)
 
 	fixture.TestOpenSession(t)
 }
 
-func TestCloseSession(t *testing.T) {
-	fixture := setup(t)
-	defer teardown(t)
+func TestGrpcCloseSession(t *testing.T) {
+	c := newSessionGrpcClientV1Test()
+	fixture := c.setup(t)
+	defer c.teardown(t)
 
 	fixture.TestCloseSession(t)
 }
