@@ -7,7 +7,7 @@ run: install
 	@go run main.go
 
 test:
-	@go test ./test/...
+	@go clean -testcache && go test ./test/...
 
 protogen:
 	protoc --go_out=plugins=grpc:. protos/sessions_v1.proto
