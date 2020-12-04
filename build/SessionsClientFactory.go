@@ -19,11 +19,13 @@ func NewSessionsClientFactory() *SessionsClientFactory {
 	// directClientDescriptor := cref.NewDescriptor("pip-services-sessions", "client", "direct", "*", "1.0")
 	cmdHttpClientDescriptor := cref.NewDescriptor("pip-services-sessions", "client", "commandable-http", "*", "1.0")
 	grpcClientDescriptor := cref.NewDescriptor("pip-services-sessions", "client", "grpc", "*", "1.0")
+	memoryClientDescriptor := cref.NewDescriptor("pip-services-sessions", "client", "memory", "*", "1.0")
 
 	// c.RegisterType(nullClientDescriptor, clients1.NewSessionsNullClientV1)
 	// c.RegisterType(directClientDescriptor, clients1.NewSessionsDirectClientV1)
 	c.RegisterType(cmdHttpClientDescriptor, clients1.NewSessionsHttpCommandableClientV1)
 	c.RegisterType(grpcClientDescriptor, clients1.NewSessionGrpcClientV1)
+	c.RegisterType(memoryClientDescriptor, clients1.NewSessionsMemoryClientV1)
 
 	return c
 }
