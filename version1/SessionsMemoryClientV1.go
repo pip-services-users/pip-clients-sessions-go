@@ -3,13 +3,13 @@ package version1
 import cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
 
 type SessionsMemoryClientV1 struct {
-	sessions []SessionV1
+	sessions []*SessionV1
 }
 
 func NewSessionsMemoryClientV1() *SessionsMemoryClientV1 {
 
 	c := SessionsMemoryClientV1{
-		sessions: make([]SessionV1, 0),
+		sessions: make([]*SessionV1, 0),
 	}
 	return &c
 }
@@ -20,7 +20,7 @@ func (c *SessionsMemoryClientV1) GetSessions(correlationId string, filter *cdata
 	items := make([]interface{}, 0)
 	for _, v := range c.sessions {
 		item := v
-		items = append(items, &item)
+		items = append(items, item)
 	}
 	return cdata.NewDataPage(&total, items), nil
 }
@@ -28,8 +28,7 @@ func (c *SessionsMemoryClientV1) GetSessions(correlationId string, filter *cdata
 func (c *SessionsMemoryClientV1) GetSessionById(correlationId string, sessionId string) (session *SessionV1, err error) {
 	for _, d := range c.sessions {
 		if d.Id == sessionId {
-			s := d
-			session = &s
+			session = d
 			break
 		}
 	}
@@ -45,7 +44,7 @@ func (c *SessionsMemoryClientV1) OpenSession(correlationId string, userId string
 	session.User = user
 	session.Data = data
 
-	c.sessions = append(c.sessions, *session)
+	c.sessions = append(c.sessions, session)
 	return session, nil
 }
 
@@ -54,8 +53,7 @@ func (c *SessionsMemoryClientV1) StoreSessionData(correlationId string, sessionI
 	for i := range c.sessions {
 		if c.sessions[i].Id == sessionId {
 			c.sessions[i].Data = data
-			item := c.sessions[i]
-			session = &item
+			session = c.sessions[i]
 			break
 		}
 	}
@@ -68,8 +66,7 @@ func (c *SessionsMemoryClientV1) UpdateSessionUser(correlationId string, session
 	for i := range c.sessions {
 		if c.sessions[i].Id == sessionId {
 			c.sessions[i].User = user
-			item := c.sessions[i]
-			session = &item
+			session = c.sessions[i]
 			break
 		}
 	}
@@ -82,8 +79,7 @@ func (c *SessionsMemoryClientV1) CloseSession(correlationId string, sessionId st
 	for i := range c.sessions {
 		if c.sessions[i].Id == sessionId {
 			c.sessions[i].Active = false
-			item := c.sessions[i]
-			session = &item
+			session = c.sessions[i]
 			break
 		}
 	}
@@ -111,5 +107,5 @@ func (c *SessionsMemoryClientV1) DeleteSessionById(correlationId string, session
 	} else {
 		c.sessions = append(c.sessions[:index], c.sessions[index+1:]...)
 	}
-	return &item, nil
+	return item, nil
 }
