@@ -1,6 +1,8 @@
 package version1
 
-import cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
+import (
+	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
+)
 
 type SessionsMemoryClientV1 struct {
 	sessions []*SessionV1
@@ -38,7 +40,8 @@ func (c *SessionsMemoryClientV1) GetSessionById(correlationId string, sessionId 
 func (c *SessionsMemoryClientV1) OpenSession(correlationId string, userId string, userName string,
 	address string, client string, user interface{}, data interface{}) (session *SessionV1, err error) {
 
-	session = NewSessionV1("", userId, userName)
+	id := cdata.IdGenerator.NextLong()
+	session = NewSessionV1(id, userId, userName)
 	session.Address = address
 	session.Client = client
 	session.User = user
