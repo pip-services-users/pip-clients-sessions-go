@@ -1,6 +1,7 @@
 package version1
 
 import (
+	"encoding/json"
 	"reflect"
 
 	"github.com/pip-services3-go/pip-services3-commons-go/data"
@@ -36,8 +37,19 @@ func (c *SessionsHttpCommandableClientV1) GetSessions(correlationId string, filt
 		return nil, err
 	}
 
-	result, _ = res.(*cdata.DataPage)
-	return result, nil
+	response, _ := res.(*cdata.DataPage)
+
+	sessions := make([]interface{}, 0)
+
+	for _, v := range response.Data {
+		buf, _ := json.Marshal(v)
+		item := SessionV1{}
+		json.Unmarshal(buf, &item)
+		sessions = append(sessions, &item)
+	}
+	var total int64 = (int64)(len(sessions))
+
+	return data.NewDataPage(&total, sessions), nil
 }
 
 func (c *SessionsHttpCommandableClientV1) GetSessionById(correlationId string, id string) (result *SessionV1, err error) {
@@ -64,7 +76,7 @@ func (c *SessionsHttpCommandableClientV1) OpenSession(correlationId string, user
 		"address", address,
 		"client", client,
 		"user", user,
-		"data", nil,
+		"data", data,
 	)
 
 	res, err := c.CallCommand(c.sessionV1Type, "open_session", correlationId, params)
